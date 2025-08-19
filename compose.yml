@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: cheetah_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: cheetah
+      POSTGRES_PASSWORD: cheetahpassword
+      POSTGRES_DB: cheetahdb
+    ports:
+      - "9000:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

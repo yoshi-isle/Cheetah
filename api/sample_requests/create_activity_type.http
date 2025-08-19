@@ -1,0 +1,6 @@
+POST http://localhost:8080/activity_type
+Content-Type: application/json
+
+{
+    "name": "Alchemical Hydra"
+}
