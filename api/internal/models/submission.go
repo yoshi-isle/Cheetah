@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
@@ -11,7 +9,7 @@ type Submission struct {
 	DiscordID    string    `json:"discord_id"`
 	Party        []string  `json:"party"`
 	ActivityID   string    `json:"activity_id"`
-	PersonalBest time.Time `json:"personal_best"`
+	PersonalBest Numeric   `json:"personal_best"`
 	Approved     bool      `json:"approved"`
 	ImgurUrl     string    `json:"imgur_url"`
 }
