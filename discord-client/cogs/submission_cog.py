@@ -36,9 +36,16 @@ class SubmissionCog(commands.Cog):
 
     @app_commands.command(name="submit", description="Submit a PB")
     @app_commands.autocomplete(item=record_autocomplete)
-    async def submit(self, interaction: discord.Interaction, item: str):
+    async def submit(
+        self, interaction: discord.Interaction, item: str, image: discord.Attachment
+    ):
         r = Redis(host=self.redis_host, port=self.redis_port, db=0)
-        sample = {"id": 3, "url": "http://example.com", "record": item}
+        sample = {
+            "id": 3,
+            "url": "http://example.com",
+            "record": item,
+            "image_url": image.url if image else None,
+        }
         r.lpush("mylist", json.dumps(sample))
         await interaction.response.send_message(
             f"Your PB request has been submitted: {item}!"
