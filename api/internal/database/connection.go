@@ -27,7 +27,7 @@ func Initialize() error {
 
 	Migrate(
 		models.Activity{},
-		models.Submission{},
+		models.Record{},
 	)
 
 	fmt.Println("✅ Database connected successfully!")
