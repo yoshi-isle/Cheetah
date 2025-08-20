@@ -2,7 +2,6 @@ import discord
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
-from views.dropdown_view import DropdownView
 
 
 class Bot(commands.Bot):
@@ -13,7 +12,6 @@ class Bot(commands.Bot):
         super().__init__(command_prefix="!", intents=intents)
 
     async def setup_hook(self) -> None:
-        self.add_view(DropdownView())
         cogs = [
             "cogs.submission_cog",
         ]
