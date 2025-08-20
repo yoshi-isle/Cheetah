@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: cheetah_postgres
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: cheetah
       POSTGRES_PASSWORD: cheetahpassword
@@ -15,7 +15,7 @@ services:
   redis:
     image: redis:latest
     container_name: cheetah_redis
-    restart: always
+    restart: unless-stopped
     ports:
       - "9001:6379"
     volumes:
@@ -25,6 +25,19 @@ services:
     build: ./discord-client
     env_file:
       - .env
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  processing-service:
+    build:
+      context: ./processing-service
+    env_file:
+      - .env
+    ports:
+      - "9005:9005"
+    depends_on:
+      - redis
     restart: unless-stopped
 
 volumes:

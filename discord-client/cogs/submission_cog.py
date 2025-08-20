@@ -1,11 +1,15 @@
 import io
 import logging
+import os
 from typing import List
 import discord
 from discord.ext import commands
 from discord import app_commands
+from flask import json
 from constants.emojis import EMOJIS
 from views.dropdown_view import DropdownView
+from redis import Redis
+from urllib.parse import urlparse
 
 
 class SubmissionCog(commands.Cog):
@@ -13,6 +17,11 @@ class SubmissionCog(commands.Cog):
         self.bot = bot
         self.logger = logger or logging.getLogger(__name__)
         self.logger.info("Submission cog initialized")
+
+        redis_url = os.getenv("REDIS_CONNECTION_STRING", "redis://localhost:6379")
+        parsed_url = urlparse(redis_url)
+        self.redis_host = parsed_url.hostname
+        self.redis_port = parsed_url.port
 
     bingo_items = [
         "Zulrah",
@@ -33,6 +42,9 @@ class SubmissionCog(commands.Cog):
     @app_commands.command(name="submit", description="Submit a PB")
     @app_commands.autocomplete(item=bingo_item_autocomplete)
     async def submit(self, interaction: discord.Interaction, item: str):
+        r = Redis(host=self.redis_host, port=self.redis_port, db=0)
+        sample = {"id": 3, "url": "http://example.com"}
+        r.lpush("mylist", json.dumps(sample))
         await interaction.response.send_message(
             f"Your PB request has been submitted: {item}!"
         )

@@ -7,3 +7,4 @@ pika
 pytest
 asyncio
 redis
+flask
