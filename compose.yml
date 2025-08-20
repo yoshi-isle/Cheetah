@@ -20,19 +20,13 @@ services:
       - "9001:6379"
     volumes:
       - redis_data:/data
-
-  discord-client:
-    build:
-      context: ./discord-client
-      dockerfile: Dockerfile
-    container_name: cheetah_discord_client
-    restart: always
-    ports:
-      - "9002:8000"
-    volumes:
-      - discord_client_data:/app/data
+      
+  discord_client:
+    build: ./discord-client
+    env_file:
+      - .env
+    restart: unless-stopped
 
 volumes:
   postgres_data:
-  discord_client_data:
   redis_data:

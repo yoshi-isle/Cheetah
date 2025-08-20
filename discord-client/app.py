@@ -1,48 +1,35 @@
-from logging import Logger
-import logging
 import discord
-import asyncio
-from discord.ext import commands
-from cogs.submission import SubmissionCog
 import os
+from discord.ext import commands
+from dotenv import load_dotenv
+from views.dropdown_view import DropdownView
 
-import redis
 
-
-class Startup:
+class Bot(commands.Bot):
     def __init__(self):
-        # Discord boilerplate
-        self.intents = discord.Intents.all()
-        self.intents.message_content = True
-        self.bot = commands.Bot(command_prefix="!", intents=self.intents)
+        load_dotenv()
+        intents = discord.Intents.all()
+        intents.message_content = True
+        super().__init__(command_prefix="!", intents=intents)
 
-        # Logging setup
-        self.logger = logging.getLogger("discord")
-        self.logger.setLevel(logging.INFO)
-        handler = logging.StreamHandler()
-        handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        )
-        self.logger.addHandler(handler)
+    async def setup_hook(self) -> None:
+        self.add_view(DropdownView())
+        cogs = [
+            "cogs.submission_cog",
+        ]
+        for cog in cogs:
+            try:
+                await self.load_extension(cog)
+                print(f"{cog} loaded successfully.")
+            except Exception as e:
+                print(f"Failed to load {cog}: {e}")
 
-        self.logger.info("Bot is starting...")
+    async def on_ready(self):
+        await self.tree.sync()
+        print(f"{self.user} has connected to Discord!")
 
-        self.redis_client = redis.Redis(
-            host=os.getenv("REDIS_HOST", "localhost"),
-            port=os.getenv("REDIS_PORT", 9001),
-            db=os.getenv("REDIS_DB", 0),
-        )
 
-    async def start_bot(self):
-        await self.bot.add_cog(SubmissionCog(self.bot, self.logger, self.redis_client))
-        try:
-            await self.bot.start(os.getenv("BOT_TOKEN"))
-        except Exception as e:
-            print(f"An error occurred while starting the bot: {e}")
+bot = Bot()
 
-    async def main():
-        startup = Startup()
-        await startup.start_bot()
-
-    if __name__ == "__main__":
-        asyncio.run(main())
+if __name__ == "__main__":
+    bot.run(os.getenv("DISCORD_BOT_TOKEN"))

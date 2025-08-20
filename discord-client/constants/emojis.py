@@ -1,0 +1,3 @@
+class EMOJIS:
+    BOSSES = "<:bosses:1407574232552050709>"
+    RAIDS = "<:raids:1407575111808188436>"
