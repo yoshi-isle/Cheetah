@@ -6,5 +6,5 @@ aiohttp
 pika
 pytest
 asyncio
-redis
+redis[hiredis]
 flask

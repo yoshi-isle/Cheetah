@@ -6,7 +6,8 @@ from urllib.parse import urlparse
 
 redis_url = os.getenv("REDIS_CONNECTION_STRING", "redis://localhost:6379")
 parsed_url = urlparse(redis_url)
-r = redis.Redis(host=parsed_url.hostname, port=parsed_url.port, db=0)
+r_submitted = redis.Redis(host=parsed_url.hostname, port=parsed_url.port, db=0)
+r_processed = redis.Redis(host=parsed_url.hostname, port=parsed_url.port, db=1)
 
 
 def upload_to_imgur(image_url):
@@ -45,12 +46,12 @@ def upload_to_imgur(image_url):
         return None
 
 
+print("Processing service started...")
 while True:
-    _, message = r.brpop("mylist")
+    _, message = r_submitted.brpop("submissions")
     data = json.loads(message)
     print(f"Processing message: {data}")
 
-    # Extract the image URL from the data
     image_url = data.get("image_url")
 
     if image_url:
@@ -58,12 +59,26 @@ while True:
         imgur_url = upload_to_imgur(image_url)
 
         if imgur_url:
-            print(f"Successfully uploaded to Imgur: {imgur_url}")
-            # You can update the data with the new Imgur URL if needed
             data["imgur_url"] = imgur_url
-        else:
-            print("Failed to upload to Imgur")
+
+            payload = {
+                "ActivityId": 0,
+                "IsApproved": False,
+                "Members": data.get("members", "Invalid"),
+                "PersonalBest": 0,
+                "SubmissionUrl": imgur_url,
+            }
+            # Create a new record in the database
+            response = requests.post(
+                os.getenv("INTERNAL_API_URL") + "/record", json=payload
+            )
+
+            if response.status_code == 201:
+                print("Record created successfully in the database.")
+            else:
+                print(f"Failed to create record: {response.text}")
+
+            # Post event to discord client
+            r_processed.lpush("pb_ready", json.dumps(data))
     else:
         print("No image URL found in the data")
-
-    # Continue with any other processing...

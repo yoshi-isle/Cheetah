@@ -39,6 +39,18 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+  
+  cheetah-api:
+    build:
+      context: ./api
+    env_file:
+      - .env
+    ports:
+      - "8000:8080"
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
 
 volumes:
   postgres_data:
