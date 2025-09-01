@@ -111,7 +111,8 @@ class SubmissionCog(commands.Cog):
                 )
                 embed.set_image(url=imgur_url)
                 msg = await channel.send(embed=embed)
-                await msg.add_reaction(EMOJIS.RAIDS)
+                await msg.add_reaction(EMOJIS.APPROVE)
+                await msg.add_reaction(EMOJIS.DENY)
 
         except Exception as e:
             self.logger.error(f"Error handling processed image: {e}")

@@ -21,7 +21,6 @@ def upload_to_imgur(image_url):
     client_id = os.getenv("IMGUR_CLIENT_ID")
     if not client_id:
         print("IMGUR_CLIENT_ID not set in environment variables.")
-        # TODO - Handle failures
         return None
 
     headers = {"Authorization": f"Client-ID {client_id}"}
