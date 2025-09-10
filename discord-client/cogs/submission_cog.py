@@ -62,9 +62,6 @@ class SubmissionCog(commands.Cog):
         members: str,
         image: discord.Attachment,
     ):
-        await interaction.user.send(
-            f"Your submission has been successfully sent for {item} and is being processed."
-        )
         await self.redis_submissions.lpush(
             "submissions",
             json.dumps(
