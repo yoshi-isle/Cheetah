@@ -19,7 +19,7 @@ func CreateActivity(c *gin.Context) {
 	db := database.GetDB()
 
 	var existingActivityType models.Activity
-	if err := db.Where("name = ?", activity.Name).First(&existingActivityType).Error; err == nil {
+	if err := db.Where(models.Activity{Name: activity.Name}).First(&existingActivityType).Error; err == nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "Activity Type with this name already exists"})
 		return
 	}

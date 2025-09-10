@@ -10,10 +10,16 @@ import (
 
 func CreateRecord(c *gin.Context) {
 	var record models.Record
+	var activity models.Activity
 
 	c.ShouldBindJSON(&record)
 
 	db := database.GetDB()
+	
+	if err := db.First(&activity, record.ActivityID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Activity with this ID does not exist"})
+		return
+	}
 
 	db.Create(&record)
 

@@ -2,9 +2,9 @@ POST http://localhost:8000/record
 Content-Type: application/json
 
 {
-    "activity_id": "12345",
+    "activity_id": 1,
     "is_approved": false,
     "discord_ids": "67890",
     "personal_best": 100,
-    "submission_url": "http://example.com/submission/12345"
+    "submission_url": "https://i.imgur.com/6VWzPMx.png"
 }
