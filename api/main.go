@@ -19,6 +19,7 @@ func StartAPI() {
 	r.GET("/ping", handlers.Ping)
 	r.POST("/activity_type", handlers.CreateActivity)
 	r.POST("/record", handlers.CreateRecord)
+	r.PATCH("/record/:id", handlers.ApproveRecord)
 
 	log.Println("Server starting on :8080")
 	r.Run()

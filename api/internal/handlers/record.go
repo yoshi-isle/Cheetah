@@ -29,13 +29,21 @@ func CreateRecord(c *gin.Context) {
 	})
 }
 
-func ApproveRecord(c *gin.Context, recordID string) {
+func ApproveRecord(c *gin.Context) {
 	var record models.Record
 	db := database.GetDB()
+	recordID := c.Param("id")
 
-	db.First(&record, recordID)
+	if err := db.First(&record, recordID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Record not found"})
+		return
+	}
+
 	record.IsApproved = true
-	db.Save(&record)
+	if err := db.Save(&record).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to approve record"})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Record approved successfully",

@@ -2,5 +2,5 @@ POST http://localhost:8000/activity_type
 Content-Type: application/json
 
 {
-    "name": "Alchemical Hydra"
+    "name": "Zulrah"
 }
